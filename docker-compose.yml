@@ -1,28 +1,66 @@
+version: "3.8"
+
 services:
+
+  mysql:
+    image: mysql:8
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+
   user_service:
     build: ./user_service
     ports:
       - "5001:5001"
-    volumes:
-      - ./user_service:/app
+    depends_on:
+      - mysql
+    environment:
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: user_db
 
   product_service:
     build: ./product_service
     ports:
       - "5002:5002"
-    volumes:
-      - ./product_service:/app
+    depends_on:
+      - mysql
+    environment:
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: product_db
 
   order_service:
     build: ./order_service
     ports:
       - "5003:5003"
-    volumes:
-      - ./order_service:/app
+    depends_on:
+      - mysql
+    environment:
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: order_db
 
   payment_service:
     build: ./payment_service
     ports:
       - "5004:5004"
-    volumes:
-      - ./payment_service:/app
+    depends_on:
+      - mysql
+    environment:
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: payment_db
+
+volumes:
+  mysql_data:
