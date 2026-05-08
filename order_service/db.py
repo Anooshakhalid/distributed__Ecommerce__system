@@ -1,25 +1,24 @@
-# order-service/db.py
 import mysql.connector
 
-def get_connection():
+def get_conn():
     return mysql.connector.connect(
-        host="localhost",
+        host="host.docker.internal",
         user="root",
         password="",
         database="order_db"
     )
 
-def create_order_table():
-    conn = get_connection()
-    cursor = conn.cursor()
+def init_db():
+    conn = get_conn()
+    cur = conn.cursor()
 
-    cursor.execute("""
+    cur.execute("""
         CREATE TABLE IF NOT EXISTS orders (
             id INT AUTO_INCREMENT PRIMARY KEY,
             user_id INT,
             product_id INT,
-            status VARCHAR(50),
-            amount FLOAT
+            amount FLOAT,
+            status VARCHAR(50)
         )
     """)
 
