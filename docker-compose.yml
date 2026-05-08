@@ -3,18 +3,26 @@ services:
     build: ./user_service
     ports:
       - "5001:5001"
+    volumes:
+      - ./user_service:/app
 
   product_service:
     build: ./product_service
     ports:
       - "5002:5002"
+    volumes:
+      - ./product_service:/app
 
   order_service:
     build: ./order_service
     ports:
       - "5003:5003"
+    volumes:
+      - ./order_service:/app
 
   payment_service:
     build: ./payment_service
     ports:
       - "5004:5004"
+    volumes:
+      - ./payment_service:/app

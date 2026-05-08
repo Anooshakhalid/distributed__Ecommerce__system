@@ -4,11 +4,10 @@ from db import get_conn, init_db
 app = Flask(__name__)
 init_db()
 
-
 # ---------------------------
-# CREATE PRODUCT
+# CREATE PRODUCT (SINGLE + BULK)
 # ---------------------------
-@app.route("/product", methods=["POST"])
+@app.route("/products", methods=["POST"])
 def add_product():
     try:
         data = request.json
@@ -16,21 +15,43 @@ def add_product():
         if not data:
             return jsonify({"error": "No input data provided"}), 400
 
-        if not all(k in data for k in ("name", "price", "stock")):
-            return jsonify({"error": "Missing fields"}), 400
-
         conn = get_conn()
         cur = conn.cursor()
 
-        cur.execute(
-            "INSERT INTO products (name, price, stock) VALUES (%s, %s, %s)",
-            (data["name"], data["price"], data["stock"])
-        )
+        # ---------------------------
+        # BULK INSERT (LIST)
+        # ---------------------------
+        if isinstance(data, list):
+
+            values = []
+
+            for item in data:
+                if not all(k in item for k in ("name", "price", "stock")):
+                    return jsonify({"error": "Missing fields in one or more items"}), 400
+
+                values.append((item["name"], item["price"], item["stock"]))
+
+            cur.executemany(
+                "INSERT INTO products (name, price, stock) VALUES (%s, %s, %s)",
+                values
+            )
+
+        # ---------------------------
+        # SINGLE INSERT (DICT)
+        # ---------------------------
+        else:
+            if not all(k in data for k in ("name", "price", "stock")):
+                return jsonify({"error": "Missing fields"}), 400
+
+            cur.execute(
+                "INSERT INTO products (name, price, stock) VALUES (%s, %s, %s)",
+                (data["name"], data["price"], data["stock"])
+            )
 
         conn.commit()
         conn.close()
 
-        return jsonify({"message": "Product added successfully"}), 201
+        return jsonify({"message": "Product(s) added successfully"}), 201
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -58,7 +79,7 @@ def get_products():
 # ---------------------------
 # GET SINGLE PRODUCT
 # ---------------------------
-@app.route("/product/<int:id>", methods=["GET"])
+@app.route("/products/<int:id>", methods=["GET"])
 def get_product(id):
     try:
         conn = get_conn()
@@ -81,7 +102,7 @@ def get_product(id):
 # ---------------------------
 # UPDATE PRODUCT
 # ---------------------------
-@app.route("/product/<int:id>", methods=["PUT"])
+@app.route("/products/<int:id>", methods=["PUT"])
 def update_product(id):
     try:
         data = request.json
@@ -114,7 +135,7 @@ def update_product(id):
 # ---------------------------
 # DELETE PRODUCT
 # ---------------------------
-@app.route("/product/<int:id>", methods=["DELETE"])
+@app.route("/products/<int:id>", methods=["DELETE"])
 def delete_product(id):
     try:
         conn = get_conn()
