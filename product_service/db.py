@@ -1,13 +1,21 @@
 import mysql.connector
 import os
+import time
 
 def get_conn():
-    return mysql.connector.connect(
-        host=os.getenv("DB_HOST", "mysql"),
-        user=os.getenv("DB_USER", "root"),
-        password=os.getenv("DB_PASSWORD", "root"),
-        database=os.getenv("DB_NAME", "product_db")
-    )
+    for i in range(10):
+        try:
+            return mysql.connector.connect(
+                host=os.getenv("DB_HOST", "mysql"),
+                user=os.getenv("DB_USER", "root"),
+                password=os.getenv("DB_PASSWORD", "root"),
+                database=os.getenv("DB_NAME")
+            )
+        except Exception as e:
+            print("Waiting for MySQL...", e)
+            time.sleep(3)
+
+    raise Exception("MySQL connection failed after retries")
 
 
 def init_db():
