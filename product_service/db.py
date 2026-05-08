@@ -1,19 +1,18 @@
-# product-service/db.py
 import mysql.connector
 
-def get_connection():
+def get_conn():
     return mysql.connector.connect(
-        host="localhost",
+        host="host.docker.internal",
         user="root",
         password="",
         database="product_db"
     )
 
-def create_product_table():
-    conn = get_connection()
-    cursor = conn.cursor()
+def init_db():
+    conn = get_conn()
+    cur = conn.cursor()
 
-    cursor.execute("""
+    cur.execute("""
         CREATE TABLE IF NOT EXISTS products (
             id INT AUTO_INCREMENT PRIMARY KEY,
             name VARCHAR(100),
