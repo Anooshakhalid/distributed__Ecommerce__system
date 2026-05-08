@@ -16,8 +16,11 @@ def init_db():
         CREATE TABLE IF NOT EXISTS products (
             id INT AUTO_INCREMENT PRIMARY KEY,
             name VARCHAR(100),
+            description TEXT,
+            image_url VARCHAR(500),
             price FLOAT,
-            stock INT
+            stock INT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
 
