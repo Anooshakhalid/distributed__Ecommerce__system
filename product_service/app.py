@@ -19,34 +19,46 @@ def add_product():
         cur = conn.cursor()
 
         # ---------------------------
-        # BULK INSERT (LIST)
+        # BULK INSERT
         # ---------------------------
         if isinstance(data, list):
 
             values = []
 
             for item in data:
-                if not all(k in item for k in ("name", "price", "stock")):
+                if not all(k in item for k in ("name", "description", "image_url", "price", "stock")):
                     return jsonify({"error": "Missing fields in one or more items"}), 400
 
-                values.append((item["name"], item["price"], item["stock"]))
+                values.append((
+                    item["name"],
+                    item["description"],
+                    item["image_url"],
+                    item["price"],
+                    item["stock"]
+                ))
 
-            cur.executemany(
-                "INSERT INTO products (name, price, stock) VALUES (%s, %s, %s)",
-                values
-            )
+            cur.executemany("""
+                INSERT INTO products (name, description, image_url, price, stock)
+                VALUES (%s, %s, %s, %s, %s)
+            """, values)
 
         # ---------------------------
-        # SINGLE INSERT (DICT)
+        # SINGLE INSERT
         # ---------------------------
         else:
-            if not all(k in data for k in ("name", "price", "stock")):
+            if not all(k in data for k in ("name", "description", "image_url", "price", "stock")):
                 return jsonify({"error": "Missing fields"}), 400
 
-            cur.execute(
-                "INSERT INTO products (name, price, stock) VALUES (%s, %s, %s)",
-                (data["name"], data["price"], data["stock"])
-            )
+            cur.execute("""
+                INSERT INTO products (name, description, image_url, price, stock)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (
+                data["name"],
+                data["description"],
+                data["image_url"],
+                data["price"],
+                data["stock"]
+            ))
 
         conn.commit()
         conn.close()
@@ -66,7 +78,10 @@ def get_products():
         conn = get_conn()
         cur = conn.cursor(dictionary=True)
 
-        cur.execute("SELECT * FROM products")
+        cur.execute("""
+            SELECT id, name, description, image_url, price, stock
+            FROM products
+        """)
         data = cur.fetchall()
 
         conn.close()
@@ -85,9 +100,13 @@ def get_product(id):
         conn = get_conn()
         cur = conn.cursor(dictionary=True)
 
-        cur.execute("SELECT * FROM products WHERE id=%s", (id,))
-        product = cur.fetchone()
+        cur.execute("""
+            SELECT id, name, description, image_url, price, stock
+            FROM products
+            WHERE id=%s
+        """, (id,))
 
+        product = cur.fetchone()
         conn.close()
 
         if product:
@@ -118,10 +137,22 @@ def update_product(id):
             conn.close()
             return jsonify({"error": "Product not found"}), 404
 
-        cur.execute(
-            "UPDATE products SET name=%s, price=%s, stock=%s WHERE id=%s",
-            (data["name"], data["price"], data["stock"], id)
-        )
+        cur.execute("""
+            UPDATE products
+            SET name=%s,
+                description=%s,
+                image_url=%s,
+                price=%s,
+                stock=%s
+            WHERE id=%s
+        """, (
+            data["name"],
+            data["description"],
+            data["image_url"],
+            data["price"],
+            data["stock"],
+            id
+        ))
 
         conn.commit()
         conn.close()
