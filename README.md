@@ -128,8 +128,6 @@ Install:
 * Python 3
 * Docker Desktop
 
----
-
 # STEP 3 — Install Python Libraries
 
 Run:
@@ -138,8 +136,6 @@ Run:
 pip install flask requests mysql-connector-python
 pip install flask-cors
 ```
-
----
 
 # STEP 4 — Database Setup
 
@@ -170,8 +166,6 @@ This creates:
 * order_db
 * payment_db
 
----
-
 # STEP 5 — Run Gateway
 
 Open another terminal:
@@ -186,7 +180,6 @@ Gateway runs on:
 ```text
 http://localhost:5000/api/
 ```
----
 
 # STEP 6 — Run Frontend
 
