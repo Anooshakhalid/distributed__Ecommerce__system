@@ -1,0 +1,12 @@
+<h1>User</h1>
+
+<div id="user"></div>
+
+<script>
+fetch("/users/1")
+.then(res => res.json())
+.then(data => {
+    document.getElementById("user").innerHTML =
+    data.name + " - " + data.email;
+});
+</script>
