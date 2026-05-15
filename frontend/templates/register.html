@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Rosélia | Register</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    background:
+        linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.65)),
+        url("https://images.unsplash.com/photo-1518895949257-7621c3c786d7?q=80&w=1920&auto=format&fit=crop");
+
+    background-size:cover;
+    background-position:center;
+    color:white;
+}
+
+/* glow */
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+
+    background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.08), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(255,182,193,0.10), transparent 40%);
+
+    pointer-events:none;
+}
+
+/* CARD */
+.box{
+    width:430px;
+    padding:40px;
+
+    background:rgba(90, 5, 18, 0.45);
+    backdrop-filter:blur(14px);
+
+    border-radius:18px;
+    border:1px solid rgba(255,255,255,0.12);
+
+    text-align:center;
+    box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+
+.logo{
+    font-family:'Playfair Display',serif;
+    font-size:32px;
+    letter-spacing:4px;
+}
+
+.subtitle{
+    font-size:13px;
+    color:rgba(255,255,255,0.75);
+    margin-bottom:25px;
+}
+
+/* inputs */
+input{
+    width:100%;
+    padding:14px;
+    margin:10px 0;
+
+    border:none;
+    border-radius:10px;
+
+    background:rgba(255,255,255,0.10);
+    color:white;
+
+    outline:none;
+}
+
+input::placeholder{
+    color:rgba(255,255,255,0.6);
+}
+
+/* button */
+button{
+    width:100%;
+    padding:14px;
+
+    margin-top:10px;
+
+    border:none;
+    border-radius:50px;
+
+    background:linear-gradient(135deg, #ffe1e7, #ffb6c1);
+    color:#7a0c1d;
+
+    font-weight:600;
+    cursor:pointer;
+
+    transition:0.3s;
+}
+
+button:hover{
+    transform:translateY(-3px);
+    background:white;
+}
+
+.extra{
+    margin-top:15px;
+    font-size:13px;
+    color:rgba(255,255,255,0.7);
+}
+
+a{
+    color:#ffd6de;
+    text-decoration:none;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+    <div class="logo">ROSÉLIA</div>
+    <div class="subtitle">Create your account</div>
+
+    <form id="registerForm">
+
+        <input type="text" id="name" placeholder="Full Name" required>
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="password" id="password" placeholder="Password" required>
+
+        <button type="submit">Register</button>
+
+    </form>
+
+    <div class="extra">
+        Already have an account? <a href="/login">Login</a>
+    </div>
+
+</div>
+
+<script>
+document.getElementById("registerForm").addEventListener("submit", async function(e){
+    e.preventDefault();
+
+    const res = await fetch("http://localhost:5000/api/user/register", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            name: document.getElementById("name").value,
+            email: document.getElementById("email").value,
+            password: document.getElementById("password").value
+        })
+    });
+
+    const data = await res.json();
+
+    if(res.ok){
+        alert("Account created!");
+        window.location.href = "/login";
+    } else {
+        alert(data.error || "Registration failed");
+    }
+});
+</script>
+
+</body>
+</html>
