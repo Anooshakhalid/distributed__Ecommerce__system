@@ -47,12 +47,33 @@ def payment():
 # ---------------- USER ----------------
 @app.route("/api/user/<int:user_id>")
 def user(user_id):
+    res = requests.get(f"{USER_SERVICE}/users/{user_id}")
+    return jsonify(res.json())
+
+@app.route("/api/user/login", methods=["POST"])
+def login_user():
     try:
-        res = requests.get(f"{USER_SERVICE}/user/{user_id}")
-        return jsonify(res.json())
+        res = requests.post(
+            f"{USER_SERVICE}/login",
+            json=request.json
+        )
+        return jsonify(res.json()), res.status_code
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+    
+@app.route("/api/user/register", methods=["POST"])
+def register_user():
+    try:
+        res = requests.post(
+            f"{USER_SERVICE}/register",
+            json=request.json
+        )
+        return jsonify(res.json()), res.status_code
 
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 # ---------------- RUN ----------------
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
