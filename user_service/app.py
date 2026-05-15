@@ -67,7 +67,7 @@ def login():
 
 
 # ---------------- USERS ----------------
-@app.route("/users", methods=["GET"])
+@app.route("/users")
 def get_users():
     conn = get_conn()
     cur = conn.cursor(dictionary=True)

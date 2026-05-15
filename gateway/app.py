@@ -45,10 +45,19 @@ def payment():
         return jsonify({"error": str(e)}), 500
 
 # ---------------- USER ----------------
-@app.route("/api/user/<int:user_id>")
-def user(user_id):
-    res = requests.get(f"{USER_SERVICE}/users/{user_id}")
-    return jsonify(res.json())
+@app.route("/api/user", methods=["GET"])
+def get_users():
+    res = requests.get(f"{USER_SERVICE}/users")
+    data = res.json()   
+
+    # safety cleanup (optional backup layer)
+    if isinstance(data, list):
+        for u in data:
+            u.pop("password", None)
+    else:
+        data.pop("password", None)
+
+    return jsonify(data)
 
 @app.route("/api/user/login", methods=["POST"])
 def login_user():
@@ -62,7 +71,7 @@ def login_user():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-    
+
 @app.route("/api/user/register", methods=["POST"])
 def register_user():
     try:
