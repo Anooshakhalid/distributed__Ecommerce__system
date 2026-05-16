@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>Checkout</h1>
+
+<p id="price"></p>
+
+<button onclick="proceed()">
+Proceed To Payment
+</button>
+
+<script>
+
+const cart =
+JSON.parse(
+localStorage.getItem("cart")
+) || [];
+
+
+let total=0;
+
+cart.forEach(item=>{
+    total += Number(item.price);
+});
+
+
+document.getElementById(
+"price"
+).innerHTML =
+"Total Amount: Rs " + total;
+
+
+function proceed(){
+
+    fetch(
+    "http://192.168.1.58:5000/api/checkout",
+    {
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+
+            user_id:1,
+
+            product_id:cart[0].id
+
+        })
+
+    })
+
+    .then(res=>res.json())
+
+    .then(data=>{
+
+        console.log(data)
+
+        if(data.error){
+
+            alert(data.error)
+
+            return
+        }
+
+        if(!data.order_id){
+
+            alert(
+            "Order ID missing"
+            )
+
+            console.log(data)
+
+            return
+        }
+
+
+        localStorage.setItem(
+        "order_id",
+        data.order_id
+        )
+
+
+        localStorage.setItem(
+        "amount",
+        total
+        )
+
+
+        window.location.href=
+        "/payment/"+
+        data.order_id
+
+    })
+
+    .catch(err=>{
+
+        console.log(err)
+
+        alert(
+        "Checkout request failed"
+        )
+
+    })
+
+}
+
+</script>
+
+</body>
+</html>
