@@ -1,4 +1,4 @@
-<h1>Payment</h1>
+<!-- <h1>Payment</h1>
 
 <div id="info"></div>
 
@@ -63,4 +63,210 @@ window.location.href=
 
 }
 
+</script> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Payment</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter:wght@300;500&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+
+font-family:Inter;
+color:white;
+
+background:
+linear-gradient(
+rgba(0,0,0,.6),
+rgba(0,0,0,.7)
+),
+
+url("https://images.unsplash.com/photo-1563245372-f21724e3856d");
+
+background-size:cover;
+
+min-height:100vh;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+}
+
+.box{
+
+width:500px;
+
+padding:40px;
+
+background:rgba(255,255,255,.08);
+
+backdrop-filter:blur(25px);
+
+border-radius:30px;
+
+text-align:center;
+
+}
+
+h1{
+
+font-family:'Playfair Display';
+
+margin-bottom:30px;
+
+}
+
+.info{
+
+padding:25px;
+
+margin-bottom:30px;
+
+background:rgba(255,255,255,.1);
+
+border-radius:15px;
+
+}
+
+.input{
+
+width:100%;
+padding:14px;
+margin-bottom:15px;
+
+border:none;
+border-radius:10px;
+background:rgba(255,255,255,.1);
+
+color:white;
+}
+
+button{
+
+width:100%;
+padding:16px;
+
+border:none;
+
+border-radius:40px;
+
+background:#ffcad5;
+
+cursor:pointer;
+
+font-weight:600;
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h1>Payment</h1>
+
+<div
+id="info"
+class="info">
+</div>
+
+<input
+class="input"
+placeholder="Card Holder Name">
+
+<input
+class="input"
+placeholder="Card Number">
+
+<input
+class="input"
+placeholder="MM/YY">
+
+<input
+class="input"
+placeholder="CVV">
+
+<button onclick="pay()">
+Confirm Payment
+</button>
+
+</div>
+
+<script>
+
+const path=
+window.location.pathname
+
+const orderId=
+path.split("/").pop()
+
+const amount=
+localStorage.getItem("amount")
+
+document.getElementById(
+"info"
+).innerHTML=`
+
+Order #${orderId}
+<br><br>
+
+Amount:
+Rs ${amount}
+
+`
+
+function pay(){
+
+fetch(
+
+"http://192.168.1.58:5000/api/pay",
+
+{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+order_id:orderId,
+
+amount:amount
+
+})
+
+})
+
+.then(r=>r.json())
+
+.then(data=>{
+
+if(
+data.status=="SUCCESS"
+){
+
+window.location.href=
+"/success"
+
+}
+
+})
+
+}
+
 </script>
+
+</body>
+</html>
