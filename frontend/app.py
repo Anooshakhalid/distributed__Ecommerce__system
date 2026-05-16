@@ -25,7 +25,14 @@ def orders():
 @app.route("/payment/<int:order_id>")
 def payment(order_id):
     return render_template("payment.html", order_id=order_id)
+@app.route("/checkout")
+def checkout():
+    return render_template("checkout.html")
 
+
+@app.route("/success")
+def success():
+    return render_template("success.html")
 # ---------------- RUN ----------------
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5005, debug=True)
