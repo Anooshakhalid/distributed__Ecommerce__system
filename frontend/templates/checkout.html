@@ -1,110 +1,276 @@
 <!DOCTYPE html>
 <html>
+<head>
+<meta charset="UTF-8">
+<title>Checkout | Rosélia</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:Inter,sans-serif;
+color:white;
+min-height:100vh;
+
+background:
+linear-gradient(
+rgba(0,0,0,.55),
+rgba(0,0,0,.75)
+),
+
+url("https://images.unsplash.com/photo-1518895949257-7621c3c786d7?q=80&w=1920");
+
+background-size:cover;
+}
+
+.container{
+max-width:1100px;
+margin:auto;
+padding:50px 30px;
+}
+
+.title{
+
+font-family:'Playfair Display';
+font-size:52px;
+margin-bottom:40px;
+text-align:center;
+
+}
+
+.wrapper{
+display:grid;
+grid-template-columns:1fr 400px;
+gap:30px;
+}
+
+.card{
+
+background:rgba(255,255,255,.08);
+
+backdrop-filter:blur(20px);
+
+padding:30px;
+
+border-radius:25px;
+
+border:1px solid rgba(255,255,255,.1);
+
+}
+
+h2{
+margin-bottom:25px;
+}
+
+.input{
+
+width:100%;
+padding:15px;
+margin-bottom:15px;
+
+border:none;
+
+border-radius:12px;
+
+background:rgba(255,255,255,.12);
+
+color:white;
+}
+
+.input::placeholder{
+color:#ddd;
+}
+
+.total{
+font-size:28px;
+margin:30px 0;
+}
+
+button{
+
+width:100%;
+padding:16px;
+
+border:none;
+
+border-radius:40px;
+
+cursor:pointer;
+
+font-weight:600;
+
+background:
+linear-gradient(
+135deg,
+#ffe1e7,
+#ffb6c1
+);
+
+color:#7a0c1d;
+
+font-size:16px;
+}
+
+button:hover{
+transform:scale(1.02);
+}
+
+@media(max-width:900px){
+
+.wrapper{
+grid-template-columns:1fr;
+}
+
+}
+
+</style>
+</head>
+
 <body>
 
-<h1>Checkout</h1>
+<div class="container">
+
+<div class="title">
+Checkout
+</div>
+
+<div class="wrapper">
+
+<div class="card">
+
+<h2>Shipping Information</h2>
+
+<input class="input" placeholder="Full Name">
+<input class="input" placeholder="Email">
+
+<input class="input" placeholder="Phone Number">
+
+<input class="input" placeholder="Address Line">
+
+<input class="input" placeholder="City">
+
+<input class="input" placeholder="Postal Code">
+
+<textarea
+class="input"
+rows="4"
+placeholder="Delivery Notes"
+></textarea>
+
+</div>
+
+
+<div class="card">
+
+<h2>Order Summary</h2>
 
 <p id="price"></p>
+
+<div class="total">
+Total: Rs <span id="total"></span>
+</div>
 
 <button onclick="proceed()">
 Proceed To Payment
 </button>
 
+</div>
+
+</div>
+
+</div>
+
+
 <script>
 
-const cart =
+const cart=
 JSON.parse(
 localStorage.getItem("cart")
-) || [];
+)||[]
 
 
 let total=0;
 
 cart.forEach(item=>{
-    total += Number(item.price);
-});
 
+total += Number(item.price)
+
+})
 
 document.getElementById(
 "price"
-).innerHTML =
-"Total Amount: Rs " + total;
+).innerHTML=
+cart.length+
+" item(s)"
+
+document.getElementById(
+"total"
+).innerText=total
 
 
 function proceed(){
 
-    fetch(
-    "http://192.168.1.58:5000/api/checkout",
-    {
+fetch(
+"http://192.168.1.58:5000/api/checkout",
+{
 
-        method:"POST",
+method:"POST",
 
-        headers:{
-            "Content-Type":"application/json"
-        },
+headers:{
+"Content-Type":"application/json"
+},
 
-        body:JSON.stringify({
+body:JSON.stringify({
 
-            user_id:1,
+user_id:1,
 
-            product_id:cart[0].id
+product_id:cart[0].id
 
-        })
+})
 
-    })
+})
 
-    .then(res=>res.json())
+.then(r=>r.json())
 
-    .then(data=>{
+.then(data=>{
 
-        console.log(data)
+if(data.error){
 
-        if(data.error){
+alert(data.error)
 
-            alert(data.error)
+return
+}
 
-            return
-        }
+localStorage.setItem(
+"order_id",
+data.order_id
+)
 
-        if(!data.order_id){
+localStorage.setItem(
+"amount",
+total
+)
 
-            alert(
-            "Order ID missing"
-            )
+window.location.href=
+"/payment/"+
+data.order_id
 
-            console.log(data)
+})
 
-            return
-        }
+.catch(()=>{
 
+alert(
+"Checkout failed"
+)
 
-        localStorage.setItem(
-        "order_id",
-        data.order_id
-        )
-
-
-        localStorage.setItem(
-        "amount",
-        total
-        )
-
-
-        window.location.href=
-        "/payment/"+
-        data.order_id
-
-    })
-
-    .catch(err=>{
-
-        console.log(err)
-
-        alert(
-        "Checkout request failed"
-        )
-
-    })
+})
 
 }
 
