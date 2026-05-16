@@ -1,4 +1,4 @@
-<h1>Orders</h1>
+<!-- <h1>Orders</h1>
 
 <div id="orders"></div>
 
@@ -22,4 +22,126 @@ fetch("/orders")
 function pay(id) {
     window.location.href = "/payment-page?order_id=" + id;
 }
+</script> -->
+<!DOCTYPE html>
+<html>
+<head>
+
+<style>
+
+body{
+
+font-family:Inter;
+padding:50px;
+
+background:#faf4f6;
+}
+
+.box{
+
+max-width:900px;
+
+margin:auto;
+}
+
+.card{
+
+padding:25px;
+
+border-radius:20px;
+
+background:white;
+
+margin-bottom:20px;
+
+box-shadow:
+0 10px 30px rgba(0,0,0,.08);
+
+}
+
+button{
+
+padding:12px 30px;
+
+border:none;
+
+border-radius:40px;
+
+background:#ffcad5;
+
+cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<h1>
+My Orders
+</h1>
+
+<div id="orders"></div>
+
+</div>
+
+<script>
+
+fetch("/orders")
+
+.then(r=>r.json())
+
+.then(data=>{
+
+let html="";
+
+data.forEach(o=>{
+
+html +=`
+
+<div class="card">
+
+<h3>
+Order #${o.id}
+</h3>
+
+<p>
+Pending Payment
+</p>
+
+<button
+onclick="pay(${o.id})"
+>
+
+Pay
+
+</button>
+
+</div>
+
+`
+
+})
+
+document.getElementById(
+"orders"
+).innerHTML=html
+
+})
+
+
+function pay(id){
+
+window.location.href=
+"/payment/"+id
+
+}
+
 </script>
+
+</body>
+
+</html>
